@@ -1,4 +1,4 @@
-# I Driver Monitoring Smart Dashboard
+# AI Driver Monitoring Smart Dashboard
 
 ## Overview
 This project is an AI-powered smart car dashboard system designed to enhance road safety by detecting driver impairment (drowsiness and alcohol influence) and executing intelligent safety interventions.
