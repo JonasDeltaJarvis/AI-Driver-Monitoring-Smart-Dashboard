@@ -171,6 +171,10 @@ Honestly discussing limitations is part of rigorous engineering:
 Built as part of an independent engineering portfolio while studying A-Level Mathematics in Zambia. The project explores the intersection of embedded systems, computer vision, and road safety — motivated by the real-world relevance of driver impairment detection in developing road infrastructure contexts.
  
 ---
+
+## Results
+
+![Driver Monitoring Analysis](drowsiness_analysis.png)
  
 ## Author
  
