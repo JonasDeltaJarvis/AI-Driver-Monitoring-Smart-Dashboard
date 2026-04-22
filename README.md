@@ -137,8 +137,11 @@ void gradualStop() {
  
 The video below shows the drowsiness detection running on real test footage. EAR value and status are annotated on each frame in real time. Green overlay = alert, red overlay + border = DROWSY detected.
  
-> drowsiness_output_h264.mp4
- 
+drowsiness_output_h264.mp4
+
+## Results
+
+![Driver Monitoring Analysis](drowsiness_analysis.png) 
 ---
  
 ## Results & Evaluation
@@ -172,9 +175,6 @@ Built as part of an independent engineering portfolio while studying A-Level Mat
  
 ---
 
-## Results
-
-![Driver Monitoring Analysis](drowsiness_analysis.png)
  
 ## Author
  
