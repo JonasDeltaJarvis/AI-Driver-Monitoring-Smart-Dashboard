@@ -71,7 +71,7 @@ The Pi and Arduino communicate over a single USB A to USB B cable, which handles
  
 ## Circuit Schematic
  
-![Tinkercad Schematic](tinkercad_schematic.png)
+![Tinkercad Schematic](schematic.png)
  
 The circuit was designed and simulated in Tinkercad before physical assembly. The simulation confirmed:
 - Motor forward/backward control via L293D
