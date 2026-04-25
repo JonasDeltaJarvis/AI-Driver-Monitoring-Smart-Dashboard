@@ -20,22 +20,19 @@ from mediapipe.tasks.python import vision
 
 # =============================================================
 # SECTION 1: CONFIGURATION
-# Change these values to tune the system behaviour
 # =============================================================
 
-SERIAL_PORT     = '/dev/ttyUSB0'   # USB serial port to Arduino
-BAUD_RATE       = 9600             # must match Arduino Serial.begin()
-CAMERA_INDEX    = 0                # 0 = first camera (CSI or USB)
-EAR_THRESHOLD   = 0.22            # below this = eye is closing
-WARNING_EAR     = 0.28            # below this = early warning zone
-CLOSED_FRAMES   = 15              # frames before drowsy alert triggers
+SERIAL_PORT     = '/dev/ttyUSB0'
+BAUD_RATE       = 9600
+CAMERA_INDEX    = 0
+EAR_THRESHOLD   = 0.22
+WARNING_EAR     = 0.28
+CLOSED_FRAMES   = 15
 LOG_FILE        = 'session_log.csv'
 MODEL_PATH      = 'face_landmarker.task'
 
 # =============================================================
 # SECTION 2: EYE LANDMARK INDICES
-# These are the 6 points MediaPipe uses around each eye
-# from its 468-point face mesh model
 # =============================================================
 
 LEFT_EYE  = [362, 385, 387, 263, 373, 380]
@@ -43,25 +40,20 @@ RIGHT_EYE = [33,  160, 158, 133, 153, 144]
 
 # =============================================================
 # SECTION 3: EAR FORMULA
-# Measures how open the eye is using geometry
-# Open eye ≈ 0.33 | Closing ≈ 0.28 | Closed ≈ 0.07
 # =============================================================
 
 def eye_aspect_ratio(landmarks, eye_indices, w, h):
     pts = [(landmarks[i].x * w, landmarks[i].y * h)
            for i in eye_indices]
 
-    A = np.linalg.norm(np.array(pts[1]) - np.array(pts[5]))  # vertical
-    B = np.linalg.norm(np.array(pts[2]) - np.array(pts[4]))  # vertical
-    C = np.linalg.norm(np.array(pts[0]) - np.array(pts[3]))  # horizontal
+    A = np.linalg.norm(np.array(pts[1]) - np.array(pts[5]))
+    B = np.linalg.norm(np.array(pts[2]) - np.array(pts[4]))
+    C = np.linalg.norm(np.array(pts[0]) - np.array(pts[3]))
 
     return (A + B) / (2.0 * C)
 
 # =============================================================
 # SECTION 4: INTERVENTION LEVEL LOGIC
-# Level 1 = OK (green)
-# Level 2 = Warning, eyes closing (orange)
-# Level 3 = Alert, drowsy or alcohol detected (red)
 # =============================================================
 
 def get_intervention_level(ear, frame_count):
@@ -76,14 +68,19 @@ def get_intervention_level(ear, frame_count):
 
 # =============================================================
 # SECTION 5: SERIAL COMMUNICATION
-# Sends commands to Arduino over USB serial
-# Arduino listens for these and controls motors + alerts
+# Updated to send EAR value to Arduino for LCD display
 # =============================================================
 
-def send_command(arduino, level):
+def send_command(arduino, level, ear=None):
     try:
         if level == 3:
             arduino.write(b'DROWSY\n')
+        elif level == 2:
+            arduino.write(b'WARNING\n')
+        elif ear is not None:
+            # Send EAR value so Arduino can display it on LCD
+            msg = f'EAR:{ear:.2f}\n'
+            arduino.write(msg.encode())
         else:
             arduino.write(b'OK\n')
     except serial.SerialException as e:
@@ -91,8 +88,6 @@ def send_command(arduino, level):
 
 # =============================================================
 # SECTION 6: DATA LOGGING
-# Saves every frame's data to a CSV file
-# Use this to analyse patterns and generate graphs later
 # =============================================================
 
 def setup_logger(filepath):
@@ -113,8 +108,6 @@ def log_frame(writer, frame_num, ear, level, status):
 
 # =============================================================
 # SECTION 7: DRAW OVERLAY
-# Draws EAR value, status, and coloured border onto each frame
-# Green = OK | Orange = Warning | Red = Alert
 # =============================================================
 
 COLOURS = {
@@ -134,13 +127,12 @@ def draw_overlay(frame, ear, label, level, w):
                 (30, 150), cv2.FONT_HERSHEY_SIMPLEX, 0.7, colour, 2)
 
     if level >= 2:
-        h_frame = frame.shape[0]
         cv2.rectangle(frame, (0, 0), (w, 120), colour, 3)
 
     return frame
 
 # =============================================================
-# SECTION 8: SETUP — runs once at startup
+# SECTION 8: SETUP
 # =============================================================
 
 def setup():
@@ -159,7 +151,7 @@ def setup():
     # Open serial connection to Arduino
     try:
         arduino = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
-        time.sleep(2)  # wait for Arduino to reset
+        time.sleep(2)
         print(f"Arduino connected on {SERIAL_PORT}.")
     except serial.SerialException:
         print("WARNING: Arduino not found. Running without serial.")
@@ -174,8 +166,7 @@ def setup():
     return detector, arduino, cap
 
 # =============================================================
-# SECTION 9: MAIN LOOP — runs continuously
-# This is the heart of the system
+# SECTION 9: MAIN LOOP
 # =============================================================
 
 def main():
@@ -198,7 +189,6 @@ def main():
             frame_num += 1
             h, w = frame.shape[:2]
 
-            # Convert frame for MediaPipe
             rgb      = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
             result   = detector.detect(mp_image)
@@ -220,22 +210,21 @@ def main():
 
                 level, label = get_intervention_level(ear, frame_count)
 
-                # Only send serial command when level changes
-                # (avoids flooding Arduino with repeated messages)
+                # Send command to Arduino when level changes
+                # Also send EAR value every 30 frames for LCD display
                 if level != last_level and arduino:
-                    send_command(arduino, level)
+                    send_command(arduino, level, ear)
                     last_level = level
+                elif frame_num % 30 == 0 and arduino and level == 1:
+                    send_command(arduino, level, ear)
 
-                # Draw overlay onto frame
                 frame = draw_overlay(frame, ear, label, level, w)
 
-            # Log this frame
             log_frame(writer, frame_num, ear, level, label)
 
-            # Show frame on screen (remove this line when running headless on Pi)
+            # Show frame (remove when running headless on Pi)
             cv2.imshow('AI Driver Monitor', frame)
 
-            # Press Q to quit
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
@@ -243,7 +232,6 @@ def main():
         print("\nStopped by user.")
 
     finally:
-        # Clean up everything properly
         cap.release()
         cv2.destroyAllWindows()
         log_file.close()
