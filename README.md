@@ -140,7 +140,7 @@ The video below shows the drowsiness detection running on real test footage. EAR
 
 ## Results
 
-![Driver Monitoring Analysis](drowsiness_analysis.png) 
+![Driver Monitoring Analysis](Demo_Files/drowsiness_analysis.png)
 ---
  
 ## Results & Evaluation
