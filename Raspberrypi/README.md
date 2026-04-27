@@ -142,5 +142,5 @@ Use the Jupyter notebook in the `demo files` folder to generate graphs from this
 - If the Arduino is not connected, the script will print a warning and continue running without serial communication, useful for testing the detection algorithm alone
 - The `cv2.imshow` line displays the annotated video feed on screen, remove this line if running the Pi headlessly (without a monitor)
 - MediaPipe face detection works best in good lighting, performance degrades significantly in low light conditions
-- The script logs every frame regardless of whether a face is detected — frames with no face detected will have empty EAR and level fields in the CSV
+- The script logs every frame regardless of whether a face is detected, frames with no face detected will have empty EAR and level fields in the CSV
  
