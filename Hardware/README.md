@@ -22,8 +22,8 @@ This folder contains all hardware documentation for the AI Driver Monitoring Sma
  
 The system uses a distributed architecture with two processing units:
  
-- **Raspberry Pi 4** — AI layer. Runs the MediaPipe face mesh model, calculates Eye Aspect Ratio, and sends serial commands to the Arduino
-- **Arduino Uno** — Control layer. Reads sensors, controls motors via L293D, and manages alert outputs
+- **Raspberry Pi 4**: AI layer. Runs the MediaPipe face mesh model, calculates Eye Aspect Ratio, and sends serial commands to the Arduino
+- **Arduino Uno**: Control layer. Reads sensors, controls motors via L293D, and manages alert outputs
 The Pi and Arduino communicate over a single USB A to USB B cable, which handles both power delivery to the Arduino and bidirectional serial communication at 9600 baud.
  
 ---
@@ -40,19 +40,19 @@ The Pi and Arduino communicate over a single USB A to USB B cable, which handles
 ### Arduino Uno
 | Component | Pin | Connection type |
 |-----------|-----|----------------|
-| L293D IN1 | D8 | Digital output — motor direction |
-| L293D IN2 | D9 | Digital output — motor direction |
-| L293D IN3 | D10 | Digital output — motor direction |
-| L293D IN4 | D11 | Digital output — motor direction |
-| L293D ENA | D5 | PWM — Motor A speed |
-| L293D ENB | D6 | PWM — Motor B speed |
-| Buzzer | D3 | Digital output — audible alert |
-| LED | D2 | Digital output — visual alert (220Ω resistor) |
-| MQ-3 sensor | A0 | Analog input — alcohol detection |
-| MPU6050 SDA | A4 | I2C data — motion sensing |
-| MPU6050 SCL | A5 | I2C clock — motion sensing |
-| LCD SDA | A4 | I2C data — shared bus with MPU6050 |
-| LCD SCL | A5 | I2C clock — shared bus with MPU6050 |
+| L293D IN1 | D8 | Digital output: motor direction |
+| L293D IN2 | D9 | Digital output: motor direction |
+| L293D IN3 | D10 | Digital output: motor direction |
+| L293D IN4 | D11 | Digital output: motor direction |
+| L293D ENA | D5 | PWM: Motor A speed |
+| L293D ENB | D6 | PWM: Motor B speed |
+| Buzzer | D3 | Digital output: audible alert |
+| LED | D2 | Digital output: visual alert (220Ω resistor) |
+| MQ-3 sensor | A0 | Analog input: alcohol detection |
+| MPU6050 SDA | A4 | I2C data: motion sensing |
+| MPU6050 SCL | A5 | I2C clock: motion sensing |
+| LCD SDA | A4 | I2C data: shared bus with MPU6050 |
+| LCD SCL | A5 | I2C clock: shared bus with MPU6050 |
  
 ---
  
@@ -65,7 +65,7 @@ The Pi and Arduino communicate over a single USB A to USB B cable, which handles
 | Motors | Separate dedicated battery via L293D | 6–12V |
 | Sensors & alerts | Arduino 5V rail | 5V |
  
-**Critical:** All GND rails are connected together (common ground across all modules). Motors are never powered from the Arduino — they draw too much current and would damage it.
+**Critical:** All GND rails are connected together (common ground across all modules). Motors are never powered from the Arduino, they draw too much current and would damage it.
  
 ---
  
@@ -106,15 +106,15 @@ The circuit was designed and simulated in Tinkercad before physical assembly. Th
  
 ## I2C Bus Note
  
-The MPU6050 and LCD display share the same I2C bus (pins A4 and A5 on the Arduino). This is intentional — I2C is a bus protocol that supports multiple devices on the same two wires. Each device has a unique address so the Arduino can address them independently without interference.
+The MPU6050 and LCD display share the same I2C bus (pins A4 and A5 on the Arduino). This is intentional, I2C is a bus protocol that supports multiple devices on the same two wires. Each device has a unique address so the Arduino can address them independently without interference.
  
 ---
  
 ## Assembly Notes
  
 - Always connect all GND rails before powering the system
-- MQ-3 sensor requires 20–30 seconds warm-up time before readings are reliable — account for this in software
-- L293D ENA and ENB pins come with jumper caps by default — remove these when connecting to Arduino PWM pins
-- Never connect motors directly to Arduino — always use the L293D as an intermediary
+- MQ-3 sensor requires 20–30 seconds warm-up time before readings are reliable, account for this in software
+- L293D ENA and ENB pins come with jumper caps by default, remove these when connecting to Arduino PWM pins
+- Never connect motors directly to Arduino, always use the L293D as an intermediary
 - Test each module independently before connecting everything together
  
