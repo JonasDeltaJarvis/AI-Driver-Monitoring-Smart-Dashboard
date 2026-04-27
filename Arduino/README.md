@@ -8,7 +8,7 @@ This folder contains the Arduino control code for the AI Driver Monitoring Smart
  
 | File | Description |
 |------|-------------|
-| `main.ino` | Full Arduino control code — motor control, alcohol detection, alert levels, and serial communication |
+| `main.ino` | Full Arduino control code: motor control, alcohol detection, alert levels, and serial communication |
  
 ---
  
@@ -16,13 +16,13 @@ This folder contains the Arduino control code for the AI Driver Monitoring Smart
  
 The Arduino is the hardware control brain of the system. It has three responsibilities:
  
-**1. Motor control** — drives two DC motors via an L293D motor driver using PWM speed control. Under normal operation the car moves forward at a set speed. When impairment is detected, the Arduino executes a smooth parking stop that curves the vehicle to the left by ramping the left motor down faster than the right.
+**1. Motor control**: drives two DC motors via an L293D motor driver using PWM speed control. Under normal operation the car moves forward at a set speed. When impairment is detected, the Arduino executes a smooth parking stop that curves the vehicle to the left by ramping the left motor down faster than the right.
  
-**2. Alcohol detection** — reads the MQ-3 alcohol sensor on pin A0 continuously. If the analog value exceeds the threshold (800/1023), it immediately triggers the parking stop and alert sequence independently of the Raspberry Pi. This independence is a deliberate safety design — alcohol response works even if the Pi crashes or the serial connection drops.
+**2. Alcohol detection**: reads the MQ-3 alcohol sensor on pin A0 continuously. If the analog value exceeds the threshold (800/1023), it immediately triggers the parking stop and alert sequence independently of the Raspberry Pi. This independence is a deliberate safety design. alcohol response works even if the Pi crashes or the serial connection drops.
  
-**3. Serial communication** — listens on the USB serial port (9600 baud) for commands from the Raspberry Pi. It responds to two commands:
-- `DROWSY` — triggers parking stop and alerts
-- `OK` — resumes normal forward motion and silences alerts
+**3. Serial communication**: listens on the USB serial port (9600 baud) for commands from the Raspberry Pi. It responds to two commands:
+- `DROWSY`: triggers parking stop and alerts
+- `OK`: resumes normal forward motion and silences alerts
 ---
  
 ## Pin Connections
@@ -73,7 +73,7 @@ These values at the top of `main.ino` can be adjusted to tune system behaviour:
 |-----------|---------|--------|
 | `ALCOHOL_THRESHOLD` | 800 | Raise to make alcohol detection less sensitive, lower to make it more sensitive |
 | `NORMAL_SPEED` | 180 | Normal driving speed (0–255 PWM) |
-| `BUZZER_FREQUENCY` | 2000 | Alert tone pitch in Hz — higher = higher pitched beep |
+| `BUZZER_FREQUENCY` | 2000 | Alert tone pitch in Hz, higher = higher pitched beep |
  
 ---
  
@@ -86,14 +86,13 @@ The Arduino listens for these commands from the Raspberry Pi over USB serial at 
 | `DROWSY\n` | Executes parking stop, activates buzzer and LED |
 | `OK\n` | Resumes forward motion, silences alerts |
  
-Note: Commands must end with a newline character (`\n`) — the Arduino uses `readStringUntil('\n')` to know when a message is complete.
+Note: Commands must end with a newline character (`\n`), the Arduino uses `readStringUntil('\n')` to know when a message is complete.
  
 ---
  
 ## Notes
  
 - ENA and ENB on the L293D must be connected to PWM-capable pins (D5 and D6) for speed control to work
-- Remove the default jumper caps from ENA and ENB on the L293D before connecting to Arduino pins
 - MQ-3 sensor requires 20–30 seconds warm-up time after power on before readings are reliable
-- The parking stop lockout keeps the vehicle stopped until alcohol level drops below threshold — this prevents the car from immediately resuming after a brief dip in sensor reading
+- The parking stop lockout keeps the vehicle stopped until alcohol level drops below threshold, this prevents the car from immediately resuming after a brief dip in sensor reading
 
