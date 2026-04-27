@@ -1,6 +1,6 @@
 // =============================================
 // AI Driver Monitoring Smart Dashboard
-// Arduino Control Code — with MPU6050 + LCD
+// Arduino Control Code with MPU6050 + LCD
 // =============================================
 
 #include <Wire.h>
