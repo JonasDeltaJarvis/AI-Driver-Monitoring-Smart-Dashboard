@@ -8,7 +8,7 @@ This folder contains the full Python script that runs on the Raspberry Pi for th
  
 | File | Description |
 |------|-------------|
-| `driver_monitor.py` | Full production Python script — camera capture, drowsiness detection, data logging, and serial communication |
+| `driver_monitor.py` | Full production Python script, camera capture, drowsiness detection, data logging, and serial communication |
 | `face_landmarker.task` | MediaPipe face landmark AI model file (download separately, see setup instructions below) |
 | `session_log.csv` | Generated automatically when the script runs, frame-by-frame session data |
  
