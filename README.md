@@ -85,7 +85,7 @@ Rather than a binary stop/go response, the system implements three intervention 
  
 ### 4. Gradual Braking (PWM Ramp-Down)
  
-Instant motor cutoff is unsafe in a real vehicle — it causes sudden deceleration. The system instead ramps PWM from 180 down to 0 in steps of 15, with 100ms between each step, producing a controlled stop over approximately 1.2 seconds.
+Instant motor cutoff is unsafe in a real vehicle, it causes sudden deceleration. The system instead ramps PWM from 180 down to 0 in steps of 15, with 100ms between each step, producing a controlled stop over approximately 1.2 seconds.
  
 ```cpp
 void gradualStop() {
@@ -118,7 +118,7 @@ void gradualStop() {
 | LED | Visual alert (pin 2, 220Ω resistor) |
  
 **Power architecture:**
-- Motors powered separately (dedicated battery via L293D) — never from Arduino
+- Motors powered separately (dedicated battery via L293D), never from Arduino
 - Raspberry Pi powered from dedicated 5V power bank
 - All GND rails connected (common ground across all modules)
 ---
@@ -148,7 +148,7 @@ The video below shows the drowsiness detection running on real test footage. EAR
 - EAR threshold of 0.22 correctly distinguished open eyes (≈0.33) from closed eyes (≈0.07) with no false positives during testing
 - 15-frame window (~0.5 seconds) eliminated false triggers from normal blinking
 - Gradual braking ramp produces a controlled stop over approximately 1.2 seconds
-- Alcohol detection operates independently of the Pi — response latency under 50ms
+- Alcohol detection operates independently of the Pi, response latency under 50ms
 ---
  
 ## Limitations & Future Work
